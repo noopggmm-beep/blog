@@ -67,10 +67,10 @@ const FEEDS = {
     "https://www.scmp.com/rss/91/feed",
   ],
   tech: [
-    "https://feeds.feedburner.com/TechCrunch/",
     "https://www.wired.com/feed/rss",
     "https://feeds.arstechnica.com/arstechnica/index",
     "https://www.theverge.com/rss/index.xml",
+    "https://www.technologyreview.com/feed/",
   ],
   ip: [
     "https://ipwatchdog.com/feed/",
@@ -123,6 +123,28 @@ async function fetchFeed(feedUrl) {
   }
 }
 
+// 过滤低质量/促销内容
+const SPAM_KEYWORDS = [
+  "discount", "coupon", "promo code", "% off", "sitewide", "save on",
+  "best deals", "deal on", "deals on", "up to $", "verified",
+  "折扣码", "优惠券", "促销码",
+];
+
+function isSpam(title) {
+  const lower = title.toLowerCase();
+  return SPAM_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
+// 只保留最近 7 天的新闻
+function filterRecent(items, days = 7) {
+  const cutoff = Date.now() - days * 86400000;
+  return items.filter((item) => {
+    if (!item.pubDate) return true; // 无日期的保留
+    const d = new Date(item.pubDate).getTime();
+    return !isNaN(d) && d > cutoff;
+  });
+}
+
 // 去重取 Top N
 function deduplicate(items, n = 10) {
   const seen = new Set();
@@ -162,7 +184,8 @@ async function main() {
     // 并行抓取
     const results = await Promise.all(feeds.map((url) => fetchFeed(url)));
     const allItems = results.flat();
-    const top10 = deduplicate(allItems, 10);
+    const recent = filterRecent(allItems, 7).filter((item) => !isSpam(item.title));
+    const top10 = deduplicate(recent, 10);
 
     if (top10.length === 0) {
       console.log(`    ⚠️ 无内容，跳过`);
