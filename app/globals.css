@@ -1,26 +1,265 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ===== Theme Tokens ===== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-glow: var(--glow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ===== Light Mode (nature-inspired warm) ===== */
+:root {
+  --bg: #f8faf7;
+  --fg: #1a2e1f;
+  --accent: #0d7b6b;
+  --accent-2: #1a5f9e;
+  --card: rgba(255, 255, 255, 0.72);
+  --border: rgba(13, 123, 107, 0.15);
+  --muted: #5a7a65;
+  --glow: rgba(13, 123, 107, 0.12);
+  --gradient-1: #0d7b6b;
+  --gradient-2: #1a5f9e;
+  --gradient-3: #5b8c5a;
 }
 
+/* ===== Dark Mode (tech-nature fusion) ===== */
+.dark {
+  --bg: #0a0f0c;
+  --fg: #e0ede4;
+  --accent: #2dd4bf;
+  --accent-2: #60a5fa;
+  --card: rgba(15, 25, 18, 0.78);
+  --border: rgba(45, 212, 191, 0.12);
+  --muted: #6b8a7a;
+  --glow: rgba(45, 212, 191, 0.08);
+  --gradient-1: #2dd4bf;
+  --gradient-2: #60a5fa;
+  --gradient-3: #34d399;
+}
+
+/* ===== Base ===== */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  min-height: 100vh;
+}
+
+/* ===== Nature + Tech Background Pattern ===== */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Mountain silhouette gradient */
+  background:
+    /* Grid dots — tech pattern */
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 1px),
+    /* Soft nature gradient at bottom — mountains */
+    linear-gradient(
+      to top,
+      rgba(13, 123, 107, 0.06) 0%,
+      rgba(26, 95, 158, 0.03) 40%,
+      transparent 70%
+    ),
+    /* Warm light at top */
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      var(--glow) 0%,
+      transparent 70%
+    );
+  background-size:
+    32px 32px,
+    100% 100%,
+    100% 100%;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 10%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.15) 90%,
+    transparent 100%
+  );
+}
+
+/* ===== Glass Card ===== */
+.glass {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.glass-hover {
+  transition: all 0.3s ease;
+}
+.glass-hover:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 24px var(--glow), 0 8px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ===== Gradient Text ===== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Gradient Border ===== */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ===== Animated Glow Pulse ===== */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* ===== Hero Section ===== */
+.hero-bg {
+  position: relative;
+}
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* Mountain range silhouette */
+    linear-gradient(
+      to top,
+      rgba(13, 123, 107, 0.12) 0%,
+      rgba(13, 123, 107, 0.04) 30%,
+      transparent 60%
+    ),
+    /* Subtle grid overlay */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(45, 212, 191, 0.03) 2px,
+      rgba(45, 212, 191, 0.03) 4px
+    ),
+    /* Aurora/gradient */
+    radial-gradient(
+      ellipse 60% 50% at 50% 100%,
+      rgba(45, 212, 191, 0.08) 0%,
+      rgba(96, 165, 250, 0.04) 40%,
+      transparent 70%
+    );
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== Prose Customization ===== */
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-code: var(--accent);
+  --tw-prose-pre-bg: rgba(0, 0, 0, 0.4);
+  --tw-prose-quotes: var(--muted);
+  --tw-prose-quote-borders: var(--accent);
+}
+
+.prose a {
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+  transition: all 0.2s;
+}
+.prose a:hover {
+  color: var(--accent-2);
+  border-bottom-color: var(--accent-2);
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+pre code {
+  display: block;
+  padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  font-family: var(--font-mono, monospace);
+}
+
+:not(pre) > code {
+  background: rgba(45, 212, 191, 0.1);
+  color: var(--accent);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-weight: 500;
+  border: 1px solid rgba(45, 212, 191, 0.15);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ===== Heading anchor links ===== */
+.prose h2 a,
+.prose h3 a,
+.prose h4 a {
+  text-decoration: none;
+  border-bottom: none;
+  color: inherit;
+}
+.prose h2:hover a::after,
+.prose h3:hover a::after,
+.prose h4:hover a::after {
+  content: "#";
+  margin-left: 0.25em;
+  color: var(--accent);
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: rgba(45, 212, 191, 0.25);
+  color: var(--fg);
 }
