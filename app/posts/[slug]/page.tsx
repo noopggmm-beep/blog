@@ -17,13 +17,14 @@ interface PostPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  const zhPosts = getAllPosts("zh");
+  const enPosts = getAllPosts("en");
+  return [...zhPosts, ...enPosts].map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPostBySlug(slug) || getPostBySlug(slug, "en");
   if (!post) return { title: "Not Found" };
   return {
     title: post.frontmatter.title,
@@ -42,11 +43,11 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
-  if (!post) notFound();
-
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
+
+  const post = getPostBySlug(slug, lang);
+  if (!post) notFound();
 
   const content = await compileMdx(post.content);
 

@@ -6,15 +6,12 @@ import { getPostsByTag } from "@/lib/posts";
 import { t } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Top 10 World News",
-  description: "Daily world news in-depth analysis",
-};
+export const metadata: Metadata = { title: "Top 10 World News", description: "Daily world news in-depth analysis" };
 
 export default async function InternationalNewsPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
-  const posts = getPostsByTag("国际十大新闻");
+  const posts = getPostsByTag("国际十大新闻", lang);
 
   return (
     <Container>

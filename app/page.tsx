@@ -14,12 +14,12 @@ interface HomePageProps {
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const { page: pageParam } = await searchParams;
-  const page = Math.max(1, parseInt(pageParam || "1", 10) || 1);
-  const { posts, totalPages } = getPaginatedPosts(page, SITE.postsPerPage);
-
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
+
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam || "1", 10) || 1);
+  const { posts, totalPages } = getPaginatedPosts(page, SITE.postsPerPage, lang);
 
   const COLUMNS = [
     { href: "/innovation", icon: "🚀", label: t(lang, "homeColumnInnovation"), desc: t(lang, "homeColumnInnovationDesc") },

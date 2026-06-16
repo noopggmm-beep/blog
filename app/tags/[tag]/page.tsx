@@ -12,8 +12,9 @@ interface TagPageProps {
 }
 
 export async function generateStaticParams() {
-  const tags = getAllTags();
-  return tags.map((tag) => ({ tag: tag.name }));
+  const zhTags = getAllTags("zh");
+  const enTags = getAllTags("en");
+  return [...zhTags, ...enTags].map((tag) => ({ tag: tag.name }));
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
@@ -23,11 +24,10 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params;
-  const posts = getPostsByTag(tag);
-  if (posts.length === 0) notFound();
-
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
+  const posts = getPostsByTag(tag, lang);
+  if (posts.length === 0) notFound();
 
   return (
     <Container>

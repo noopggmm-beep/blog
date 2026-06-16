@@ -6,15 +6,12 @@ import { getAllTags } from "@/lib/posts";
 import { t } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Tags",
-  description: "Browse all article tags",
-};
+export const metadata: Metadata = { title: "Tags", description: "Browse all article tags" };
 
 export default async function TagsPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
-  const tags = getAllTags();
+  const tags = getAllTags(lang);
 
   if (tags.length === 0) {
     return (

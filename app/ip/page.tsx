@@ -6,15 +6,12 @@ import { getPostsByTag } from "@/lib/posts";
 import { t } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "IP Strategy",
-  description: "Patent Analysis · Trademark · IP Strategy",
-};
+export const metadata: Metadata = { title: "IP Strategy", description: "Patent Analysis · Trademark · IP Strategy" };
 
 export default async function IPPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
-  const posts = getPostsByTag("知识产权");
+  const posts = getPostsByTag("知识产权", lang);
 
   return (
     <Container>

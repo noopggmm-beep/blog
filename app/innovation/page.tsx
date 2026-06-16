@@ -6,15 +6,12 @@ import { getPostsByTag } from "@/lib/posts";
 import { t } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Tech Innovation",
-  description: "Frontier tech insights and trends",
-};
+export const metadata: Metadata = { title: "Tech Innovation", description: "Frontier tech insights and trends" };
 
 export default async function InnovationPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
-  const posts = getPostsByTag("科技创新");
+  const posts = getPostsByTag("科技创新", lang);
 
   return (
     <Container>
