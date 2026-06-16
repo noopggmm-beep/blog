@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.20",
+    "@vitalets/google-translate-api": "^9.2.1",
     "date-fns": "^4.4.0",
     "feed": "^5.2.1",
     "gray-matter": "^4.0.3",
