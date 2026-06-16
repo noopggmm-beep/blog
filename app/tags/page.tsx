@@ -1,15 +1,19 @@
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { getAllTags } from "@/lib/posts";
-import { SITE } from "@/lib/constants";
+import { t } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "标签",
-  description: `浏览 ${SITE.title} 的所有文章标签`,
+  title: "Tags",
+  description: "Browse all article tags",
 };
 
-export default function TagsPage() {
+export default async function TagsPage() {
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "zh") as Lang;
   const tags = getAllTags();
 
   if (tags.length === 0) {
@@ -17,7 +21,7 @@ export default function TagsPage() {
       <Container>
         <div className="py-20 text-center text-[var(--muted)]">
           <div className="text-5xl mb-4">🏷️</div>
-          <p>暂无标签</p>
+          <p>{t(lang, "tagsNoTags")}</p>
         </div>
       </Container>
     );
@@ -28,20 +32,17 @@ export default function TagsPage() {
   return (
     <Container>
       <div className="py-12 sm:py-16">
-        {/* Header */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold tracking-tight">
-            <span className="gradient-text">标签云</span>
+            <span className="gradient-text">{t(lang, "tagsTitle")}</span>
           </h1>
-          <p className="mt-2 text-[var(--muted)]">共 {tags.length} 个标签</p>
+          <p className="mt-2 text-[var(--muted)]">{t(lang, "tagsCount", { count: tags.length })}</p>
         </div>
-
         <div className="glass p-8">
           <div className="flex flex-wrap gap-3 items-center justify-center">
             {tags.map((tag) => {
               const scale = 0.75 + (tag.count / maxCount) * 0.6;
               const size = Math.round(14 * scale);
-
               return (
                 <Link
                   key={tag.name}

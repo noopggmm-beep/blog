@@ -4,18 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { SITE } from "@/lib/constants";
-
-const NAV_ITEMS = [
-  { href: "/innovation", label: "科技创新" },
-  { href: "/ip", label: "知识产权" },
-  { href: "/news/international", label: "国际新闻" },
-  { href: "/news/domestic", label: "国内新闻" },
-  { href: "/about", label: "关于" },
-];
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { useLanguage } from "@/components/ui/language-provider";
+import { t } from "@/lib/i18n";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { lang } = useLanguage();
+
+  const NAV_ITEMS = [
+    { href: "/innovation", label: t(lang, "navInnovation") },
+    { href: "/ip", label: t(lang, "navIP") },
+    { href: "/news/international", label: t(lang, "navIntlNews") },
+    { href: "/news/domestic", label: t(lang, "navDomNews") },
+    { href: "/tags", label: t(lang, "navTags") },
+    { href: "/about", label: t(lang, "navAbout") },
+  ];
 
   return (
     <header className="sticky top-0 z-50 glass border-b-0 rounded-none bg-[var(--card)]">
@@ -26,7 +30,7 @@ export function SiteHeader() {
             href="/"
             className="text-lg font-bold tracking-tight gradient-text transition-opacity hover:opacity-80 shrink-0"
           >
-            {SITE.title}
+            {t(lang, "siteTitle")}
           </Link>
 
           {/* Nav */}
@@ -54,7 +58,8 @@ export function SiteHeader() {
                 </Link>
               );
             })}
-            <div className="ml-2 pl-2 border-l border-[var(--border)] shrink-0">
+            <div className="ml-1 pl-1 border-l border-[var(--border)] flex items-center gap-1 shrink-0">
+              <LanguageToggle />
               <ThemeToggle />
             </div>
           </nav>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLanguage } from "@/components/ui/language-provider";
+import { t } from "@/lib/i18n";
 
 interface PaginationProps {
   currentPage: number;
@@ -10,6 +12,7 @@ interface PaginationProps {
 export function Pagination({ currentPage, totalPages }: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { lang } = useLanguage();
 
   if (totalPages <= 1) return null;
 
@@ -26,11 +29,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
 
   const pages: (number | "...")[] = [];
   for (let i = 1; i <= totalPages; i++) {
-    if (
-      i === 1 ||
-      i === totalPages ||
-      (i >= currentPage - 1 && i <= currentPage + 1)
-    ) {
+    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
       pages.push(i);
     } else if (pages[pages.length - 1] !== "...") {
       pages.push("...");
@@ -38,23 +37,17 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
   }
 
   return (
-    <nav
-      className="flex items-center justify-center gap-1 mt-12"
-      aria-label="分页导航"
-    >
+    <nav className="flex items-center justify-center gap-1 mt-12" aria-label="分页导航">
       <button
         onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage === 1}
         className="px-3 py-2 text-sm rounded-md border border-[var(--border)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--accent)] hover:bg-[var(--glow)] transition-all duration-200 cursor-pointer disabled:hover:bg-transparent disabled:hover:border-[var(--border)]"
       >
-        ← 上一页
+        {t(lang, "pagPrev")}
       </button>
-
       {pages.map((p, idx) =>
         p === "..." ? (
-          <span key={`dots-${idx}`} className="px-2 text-[var(--muted)]">
-            ...
-          </span>
+          <span key={`dots-${idx}`} className="px-2 text-[var(--muted)]">...</span>
         ) : (
           <button
             key={p}
@@ -69,13 +62,12 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
           </button>
         )
       )}
-
       <button
         onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="px-3 py-2 text-sm rounded-md border border-[var(--border)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--accent)] hover:bg-[var(--glow)] transition-all duration-200 cursor-pointer disabled:hover:bg-transparent disabled:hover:border-[var(--border)]"
       >
-        下一页 →
+        {t(lang, "pagNext")}
       </button>
     </nav>
   );
