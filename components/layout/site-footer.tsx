@@ -27,12 +27,6 @@ export function SiteFooter() {
                 GitHub
               </a>
             )}
-            <a
-              href={SITE.socialLinks.email}
-              className="hover:text-[var(--accent)] transition-colors"
-            >
-              邮件
-            </a>
           </div>
         </div>
       </Container>
