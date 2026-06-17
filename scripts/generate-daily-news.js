@@ -24,7 +24,7 @@ const RSS_SOURCES = {
     tag: "国际十大新闻",
     slug: "global-top10",
     titleZH: (d) => `国际十大新闻（${d}）`,
-    titleEN: (d) => `Top 10 World News (${d})`,
+    titleEN: (d) => `Top 10 World News — ${d}`,
     descZH: "每日国际要闻深度分析，洞察全球格局变化。",
     descEN: "Daily world news in-depth analysis and global insights.",
   },
@@ -32,7 +32,7 @@ const RSS_SOURCES = {
     tag: "国内十大新闻",
     slug: "china-top10",
     titleZH: (d) => `国内十大新闻（${d}）`,
-    titleEN: (d) => `Top 10 China News (${d})`,
+    titleEN: (d) => `Top 10 China News — ${d}`,
     descZH: "每日国内要闻汇总，把握中国发展脉搏。",
     descEN: "Daily China news highlights and development insights.",
   },
@@ -40,7 +40,7 @@ const RSS_SOURCES = {
     tag: "科技创新",
     slug: "tech-top10",
     titleZH: (d) => `科技创新十大突破（${d}）`,
-    titleEN: (d) => `Top 10 Tech Innovation Breakthroughs (${d})`,
+    titleEN: (d) => `Top 10 Tech Breakthroughs — ${d}`,
     descZH: "前沿科技动态与创新洞察。",
     descEN: "Frontier tech breakthroughs and innovation insights.",
   },
@@ -48,7 +48,7 @@ const RSS_SOURCES = {
     tag: "知识产权",
     slug: "ip-top10",
     titleZH: (d) => `知识产权十大事件（${d}）`,
-    titleEN: (d) => `Top 10 IP Events (${d})`,
+    titleEN: (d) => `Top 10 IP Events — ${d}`,
     descZH: "专利分析与知识产权战略洞察。",
     descEN: "Patent analysis and IP strategy insights.",
   },
@@ -232,9 +232,10 @@ async function main() {
 
 // ===== 生成 MDX =====
 function generateMDX(col, items, lang) {
-  const d = today();
-  const range = dateRange();
-  const title = lang === "zh" ? col.titleZH(range.zh) : col.titleEN(range.en);
+  const now = new Date();
+  const dateStr = today();
+  const dayLabel = lang === "zh" ? `${now.getMonth() + 1}月${now.getDate()}日` : now.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  const title = lang === "zh" ? col.titleZH(dayLabel) : col.titleEN(dayLabel);
   const desc = lang === "zh" ? col.descZH : col.descEN;
   const emojis = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "⚫", "🟤", "🔴", "🟠"];
 
@@ -262,13 +263,13 @@ ${item.description || ""}
 
   const note =
     lang === "zh"
-      ? `> 📅 ${range.zh}  |  🤖 自动采集 + 机器翻译 | 共 ${items.length} 条`
-      : `> 📅 ${range.en}  |  🤖 Auto-collected via RSS | Top ${items.length}`;
+      ? `> 📅 ${dayLabel}  |  🤖 自动采集 + 机器翻译 | 共 ${items.length} 条`
+      : `> 📅 ${dayLabel}  |  🤖 Auto-collected via RSS | Top ${items.length}`;
 
   return `---
 title: "${title}"
 description: "${desc}"
-date: "${d}"
+date: "${dateStr}"
 tags: ["${col.tag}"]
 ---
 
