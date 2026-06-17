@@ -112,3 +112,45 @@ export function getPaginatedPosts(
 
   return { posts, totalPages };
 }
+
+// 按日期分组（用于栏目页一周展示）
+export interface DateGroup {
+  date: string;
+  posts: PostMeta[];
+}
+
+export function getPostsByTagGroupedByDate(
+  tag: string,
+  lang: Lang = "zh",
+  days = 7
+): { recent: DateGroup[]; older: PostMeta[] } {
+  const all = getPostsByTag(tag, lang);
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const recent: PostMeta[] = [];
+  const older: PostMeta[] = [];
+
+  for (const post of all) {
+    if (post.frontmatter.date >= cutoffStr) {
+      recent.push(post);
+    } else {
+      older.push(post);
+    }
+  }
+
+  // 按日期分组
+  const groupMap = new Map<string, PostMeta[]>();
+  for (const post of recent) {
+    const d = post.frontmatter.date;
+    if (!groupMap.has(d)) groupMap.set(d, []);
+    groupMap.get(d)!.push(post);
+  }
+
+  const dateGroups: DateGroup[] = Array.from(groupMap.entries())
+    .sort((a, b) => (a[0] > b[0] ? -1 : 1))
+    .map(([date, posts]) => ({ date, posts }));
+
+  return { recent: dateGroups, older };
+}

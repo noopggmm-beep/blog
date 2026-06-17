@@ -282,8 +282,8 @@ ${newsItems}
 `;
 }
 
-// 自动删除 90 天以前的新闻
-function cleanupOldPosts(maxDays = 90) {
+// 自动删除 30 天以前的新闻
+function cleanupOldPosts(maxDays = 30) {
   const cutoff = Date.now() - maxDays * 86400000;
   [CONTENT_DIR, EN_CONTENT_DIR].forEach((dir) => {
     if (!fs.existsSync(dir)) return;
