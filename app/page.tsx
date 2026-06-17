@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { PostList } from "@/components/posts/post-list";
 import { Pagination } from "@/components/ui/pagination";
 import { BackToTop } from "@/components/ui/back-to-top";
+import { RefreshButton } from "@/components/ui/refresh-button";
 import { getPaginatedPosts } from "@/lib/posts";
 import { t } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
@@ -40,6 +41,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </div>
         <Container className="relative z-[1]">
           <div className="py-16 sm:py-24 text-center">
+            {/* Date & Refresh */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span className="text-xs text-[var(--muted)] font-mono">
+                {new Date().toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              <RefreshButton />
+            </div>
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="block w-8 h-px bg-gradient-to-r from-transparent to-[var(--accent)]" />
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] glow-pulse" />

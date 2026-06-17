@@ -282,7 +282,30 @@ ${newsItems}
 `;
 }
 
-main().catch((e) => {
+// 自动删除 90 天以前的新闻
+function cleanupOldPosts(maxDays = 90) {
+  const cutoff = Date.now() - maxDays * 86400000;
+  [CONTENT_DIR, EN_CONTENT_DIR].forEach((dir) => {
+    if (!fs.existsSync(dir)) return;
+    fs.readdirSync(dir)
+      .filter((f) => f.endsWith(".mdx"))
+      .forEach((f) => {
+        const filePath = path.join(dir, f);
+        const stat = fs.statSync(filePath);
+        if (stat.mtimeMs < cutoff) {
+          // 保留 hello-world 和手工撰写的文章（不含日期前缀）
+          if (!f.match(/^\d{4}-\d{2}-\d{2}-/)) return;
+          fs.unlinkSync(filePath);
+          console.log(`  🗑️  已删除过期: ${f}`);
+        }
+      });
+  });
+}
+
+main().then(() => {
+  console.log("\n🧹 清理 90 天前的旧新闻...");
+  cleanupOldPosts(90);
+}).catch((e) => {
   console.error("❌ 失败:", e.message);
   process.exit(1);
 });

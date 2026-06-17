@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { PostList } from "@/components/posts/post-list";
 import { getPostsByTag } from "@/lib/posts";
@@ -32,6 +33,14 @@ export default async function InnovationPage() {
           </div>
         </section>
         <PostList posts={posts} />
+        <div className="text-center mt-8">
+          <Link
+            href="/tags/科技创新"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+          >
+            📂 {lang === "zh" ? "历史新闻" : "History"} →
+          </Link>
+        </div>
       </div>
     </Container>
   );
