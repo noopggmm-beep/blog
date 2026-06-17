@@ -67,10 +67,9 @@ const FEEDS = {
     "https://www.scmp.com/rss/91/feed",
   ],
   tech: [
-    "https://www.wired.com/feed/rss",
-    "https://feeds.arstechnica.com/arstechnica/index",
-    "https://www.theverge.com/rss/index.xml",
     "https://www.technologyreview.com/feed/",
+    "https://www.sciencedaily.com/rss/top/technology.xml",
+    "https://feeds.arstechnica.com/arstechnica/science",
   ],
   ip: [
     "https://ipwatchdog.com/feed/",
@@ -123,16 +122,29 @@ async function fetchFeed(feedUrl) {
   }
 }
 
-// 过滤低质量/促销内容
-const SPAM_KEYWORDS = [
+// 过滤低质量/促销/负面内容
+const BLOCK_KEYWORDS = [
+  // 广告促销
   "discount", "coupon", "promo code", "% off", "sitewide", "save on",
   "best deals", "deal on", "deals on", "up to $", "verified",
-  "折扣码", "优惠券", "促销码",
+  "折扣码", "优惠券", "促销码", "promo codes", "buy now", "shop",
+  "price drop", "clearance", "flash sale", "best price",
+  // 产品评测/购买指南
+  "Best ", "best ", " vs ", " VS ", "review:",
+  "for $", "under $", "buy the", "you can buy", "you can finally",
+  "on sale", "now available", "hands-on", "unboxing",
+  // 负面/暴力/死亡
+  "killed", "dead", "death", "dies", "died", "killing",
+  "attack", "bombing", "strike kills", "casualties", "massacre",
+  "war crime", "torture", "execution", "murder", "slaughter",
+  // 敏感内容
+  "sex", "sexual", "rape", "abuse", "scandal", "corruption",
+  "protest violence", "riot", "shooting", "leak exposes",
 ];
 
-function isSpam(title) {
+function isBlocked(title) {
   const lower = title.toLowerCase();
-  return SPAM_KEYWORDS.some((kw) => lower.includes(kw));
+  return BLOCK_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
 // 只保留最近 7 天的新闻
@@ -184,7 +196,7 @@ async function main() {
     // 并行抓取
     const results = await Promise.all(feeds.map((url) => fetchFeed(url)));
     const allItems = results.flat();
-    const recent = filterRecent(allItems, 7).filter((item) => !isSpam(item.title));
+    const recent = filterRecent(allItems, 7).filter((item) => !isBlocked(item.title));
     const top10 = deduplicate(recent, 10);
 
     if (top10.length === 0) {
